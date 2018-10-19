@@ -134,35 +134,24 @@ public class CRUD {
 
 	public void uploadDb() throws SQLException {
 		Iterator<Person2> iter = PersonDatabase2.nowa.iterator();
-		LinkedList<Person2> fromDb = getAllFromDb();
-		Iterator<Person2> iterDb = fromDb.iterator();
 
 		while (iter.hasNext()) {
-			while (iterDb.hasNext()) {
 
-				try {
-					Person2 personLocal = iter.next();
-					if (checkByPeselInDB(personLocal)) {
-						updateInDb(personLocal);
-					} else {
-						System.out.println("Nie ma takiej osoby - dodaję nową");
-						addToDb(personLocal);
-					}
-				} catch (NoSuchElementException e) {
-					System.out.println("brak zmian");
-					break;
+			try {
+				Person2 personLocal = iter.next();
+				if (checkByPeselInDB(personLocal)) {
+					System.out.println("znalazłem rekord o tym numerze pesel = uaktualniam jeśli trzeba");
+					updateInDb(personLocal);
+				} else {
+					System.out.println("Nie ma takiej osoby - dodaję nową");
+					addToDb(personLocal);
 				}
+			} catch (NoSuchElementException e) {
+				System.out.println("brak zmian");
+				break;
 			}
 		}
 	}
-
-	/*
-	 * if (peselDb.equals(peselLocal)) {
-	 * System.out.println("zmiany w rekordzie o numerze pesel : " + peselDb);
-	 * updateInDb(personLocal); break; } else {
-	 * System.out.println("nie ma w bazie więc dodaje"); addToDb(personLocal);
-	 * break; } } }
-	 */
 
 	public boolean checkByPeselInDB(Person2 checkedPerson) throws SQLException {
 
