@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 public class PersonDatabase2 implements Readable {
 	public static int a = 0;
-
 	public static List<Person2> nowa;
 	public static Scanner input = new Scanner(System.in);
 

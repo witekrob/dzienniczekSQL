@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 public class CRUD {
 	dbConnector connect = new dbConnector();
 	Scanner input = new Scanner(System.in);
-
 	int a = PersonDatabase2.a;
 
 	public CRUD() {
