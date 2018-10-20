@@ -3,10 +3,12 @@ import java.nio.CharBuffer;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import java.util.Scanner;
 
 public class PersonDatabase2 implements Readable {
 	public static int a = 0;
+
 	public static List<Person2> nowa;
 	public static Scanner input = new Scanner(System.in);
 
@@ -20,9 +22,9 @@ public class PersonDatabase2 implements Readable {
 		for (Person2 p : nowa) {
 			if (p.getPesel().equals(check.getPesel())) {
 
-				System.out.println("porównuję : " + check.toString() + " z : " + p.toString());
 				found = p;
 				break;
+
 			} else {
 				found = null;
 			}

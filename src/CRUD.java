@@ -1,5 +1,4 @@
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,8 +13,8 @@ import java.sql.ResultSet;
 public class CRUD {
 	dbConnector connect = new dbConnector();
 	Scanner input = new Scanner(System.in);
-	int a = PersonDatabase2.a;
 
+	int a = PersonDatabase2.a;
 	public CRUD() {
 	}
 
@@ -95,7 +94,7 @@ public class CRUD {
 		prepStat.executeUpdate();
 		con.close();
 	}
-
+	
 	public void updateInDb(Person2 p) throws SQLException {
 		Connection conn = connect.getConnection();
 		String query = "UPDATE uczniowie SET name=?,surname=? WHERE pesel = ?;";
@@ -134,21 +133,24 @@ public class CRUD {
 
 	public void uploadDb() throws SQLException {
 		Iterator<Person2> iter = PersonDatabase2.nowa.iterator();
+		LinkedList<Person2> fromDb = getAllFromDb();
+		Iterator<Person2> iterDb = fromDb.iterator();
 
 		while (iter.hasNext()) {
-
-			try {
-				Person2 personLocal = iter.next();
-				if (checkByPeselInDB(personLocal)) {
-					System.out.println("znalazłem rekord o tym numerze pesel = uaktualniam jeśli trzeba");
-					updateInDb(personLocal);
-				} else {
-					System.out.println("Nie ma takiej osoby - dodaję nową");
-					addToDb(personLocal);
+			while (iterDb.hasNext()) {
+				
+				try {
+					Person2 personLocal = iter.next();
+					if (checkByPeselInDB(personLocal)) {
+						updateInDb(personLocal);
+					} else {
+						System.out.println("Nie ma takiej osoby - dodaję nową");
+						addToDb(personLocal);
+					}
+				} catch (NoSuchElementException e) {
+					System.out.println("brak zmian");
+					break;
 				}
-			} catch (NoSuchElementException e) {
-				System.out.println("brak zmian");
-				break;
 			}
 		}
 	}
