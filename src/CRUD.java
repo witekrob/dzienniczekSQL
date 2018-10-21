@@ -15,6 +15,7 @@ public class CRUD {
 	Scanner input = new Scanner(System.in);
 
 	int a = PersonDatabase2.a;
+
 	public CRUD() {
 	}
 
@@ -23,18 +24,19 @@ public class CRUD {
 		String sqlQuery = "SELECT * from uczniowie";
 		PreparedStatement prepStat = con.prepareStatement(sqlQuery);
 		ResultSet reSet = prepStat.executeQuery();
-		PersonDatabase2 database = new PersonDatabase2();
 		LinkedList<Person2> dbList = new LinkedList<Person2>();
 
 		String name = null;
 		String surname = null;
 		String pesel = null;
-
+	
 		while (reSet.next()) {
+			List<Integer> grades = new LinkedList<Integer>();
+			
 			name = reSet.getString("name");
 			surname = reSet.getString("surname");
 			pesel = reSet.getString("pesel");
-			Person2 pers = new Person2(name, surname, pesel, null);
+			Person2 pers = new Person2(name, surname, pesel, grades);
 			dbList.add(pers);
 		}
 		return dbList;
@@ -42,10 +44,9 @@ public class CRUD {
 
 	public void addAllFromDbToLocal() throws SQLException {
 		LinkedList<Person2> fromDb = getAllFromDb();
-		PersonDatabase2 database = new PersonDatabase2();
 
 		for (Person2 p : fromDb) {
-			database.addToLocal(p);
+			PersonDatabase2.addToLocal(p);
 		}
 	}
 
@@ -53,7 +54,7 @@ public class CRUD {
 
 		Connection con = connect.getConnection();
 
-		System.out.println("podaj pesel osoby do usunięcia");
+		System.out.println("podaj pesel osoby do usuniÄ™cia");
 		int pes = input.nextInt();
 		String deleteQuery = "DELETE FROM uczniowie WHERE pesel=?;";
 		PreparedStatement prepStmt = con.prepareStatement(deleteQuery);
@@ -63,7 +64,7 @@ public class CRUD {
 	}
 
 	public void addNewOrUpdate() throws SQLException {
-		System.out.println("podaj imię studenta do dodania");
+		System.out.println("podaj imiÄ™ studenta do dodania");
 		String name = input.next();
 		System.out.println("podaj nazwisko studenta do dodania");
 		String surname = input.next();
@@ -85,6 +86,7 @@ public class CRUD {
 		String name = pers.getName();
 		String surname = pers.getSurname();
 		String pesel = pers.getPesel();
+		List<Integer> grades = pers.getOcenki();
 
 		String createQuery = "INSERT into uczniowie(name,surname,pesel) VALUES (?,?,?);";
 		PreparedStatement prepStat = con.prepareStatement(createQuery);
@@ -93,8 +95,9 @@ public class CRUD {
 		prepStat.setString(3, pesel);
 		prepStat.executeUpdate();
 		con.close();
+		addGrades(pers, grades);
 	}
-	
+
 	public void updateInDb(Person2 p) throws SQLException {
 		Connection conn = connect.getConnection();
 		String query = "UPDATE uczniowie SET name=?,surname=? WHERE pesel = ?;";
@@ -125,7 +128,7 @@ public class CRUD {
 		if (checkByPeselInDB(newPerson)) {
 			updateInDb(newPerson);
 		} else {
-			System.out.println("Nie ma takiej osoby - dodaję nową");
+			System.out.println("Nie ma takiej osoby - dodajÄ™ nowÄ…");
 			addToDb(newPerson);
 		}
 
@@ -138,13 +141,13 @@ public class CRUD {
 
 		while (iter.hasNext()) {
 			while (iterDb.hasNext()) {
-				
+
 				try {
 					Person2 personLocal = iter.next();
 					if (checkByPeselInDB(personLocal)) {
 						updateInDb(personLocal);
 					} else {
-						System.out.println("Nie ma takiej osoby - dodaję nową");
+						System.out.println("Nie ma takiej osoby - dodajÄ™ nowÄ…");
 						addToDb(personLocal);
 					}
 				} catch (NoSuchElementException e) {
@@ -176,5 +179,17 @@ public class CRUD {
 			}
 		}
 		return result;
+	}
+
+	public void addGrades(Person2 pers, List<Integer> grades) throws SQLException {
+		String addGrade = "Update grades set ocena=? where pesel=?;";
+		String pesel = pers.getPesel();
+		grades = pers.getOcenki();
+		Connection con = connect.getConnection();
+		PreparedStatement prep = con.prepareStatement(addGrade);
+		prep.setInt(1, grades.get(0));
+		prep.setNString(2, pesel);
+		prep.executeUpdate();
+		con.close();
 	}
 }

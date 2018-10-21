@@ -4,33 +4,30 @@ import java.util.List;
 import java.util.Scanner;
 
 public class grades {
-	PersonDatabase2 db2 = new PersonDatabase2();
-	LinkedList<Person2> nn = (LinkedList<Person2>) db2.nowa;
 
+	
 	public grades() {
-
 	}
-	public void addGrade() {
 
+	public void addGrade() {
+		int index = 0;
 		Scanner input = new Scanner(System.in);
-		Person2 p = db2.get1();
+		
+		Person2 p = PersonDatabase2.get1();
 
 		if (p != null) {
 
 			System.out.println("Wpisz ocenę studenta : " + p.getName() + "  " + p.getSurname());
 			int grade = input.nextInt();
-
 			p.getOcenki().add(grade);
-
 			System.out.println("Dodano ocenę");
-
 		}
 	}
 
 	public void removeGrade() {
 		Scanner input = new Scanner(System.in);
 
-		Person2 p = db2.get1();
+		Person2 p = PersonDatabase2.get1();
 
 		List<Integer> grady = new LinkedList<Integer>();
 		grady = p.getOcenki();

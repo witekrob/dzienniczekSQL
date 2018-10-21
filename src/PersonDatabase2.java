@@ -13,7 +13,7 @@ public class PersonDatabase2 implements Readable {
 	public static Scanner input = new Scanner(System.in);
 
 	public PersonDatabase2() {
-		nowa = new LinkedList<Person2>();
+			nowa = new LinkedList<Person2>();
 	}
 
 	public static Person2 findByPesel(Person2 check) {
@@ -35,13 +35,18 @@ public class PersonDatabase2 implements Readable {
 	public static void addToLocal(Person2 newPerson) {
 
 		if (nowa.isEmpty()) {
+			System.out.println("Nie ma nikogo na liście, dodaję");
 			nowa.add(newPerson);
+
 		} else {
 			Person2 check = findByPesel(newPerson);
 			if (check == null) {
-				System.out.println("Dodaję nowy do bazy lokalnej");
+				System.out.println(nowa);
+				System.out.println("DodajÄ™ nowy do bazy lokalnej");
 				nowa.add(newPerson);
+
 			} else {
+				System.out.println("Juz taki jest , uaktualniam dane");
 				String newName = newPerson.getName();
 				String newSurname = newPerson.getSurname();
 				List<Integer> newOcenki = newPerson.getOcenki();
@@ -57,7 +62,7 @@ public class PersonDatabase2 implements Readable {
 		Person2 p = new Person2();
 		List<Integer> grades = new LinkedList<Integer>();
 
-		System.out.println("podaj imiê : ");
+		System.out.println("podaj imiÃª : ");
 		String name = input.next();
 		p.setName(name);
 
@@ -77,10 +82,11 @@ public class PersonDatabase2 implements Readable {
 		Iterator<Person2> iter = nowa.iterator();
 		while (iter.hasNext()) {
 			System.out.println(iter.next());
+
 		}
 	}
 
-	public Person2 get1() {
+	public static Person2 get1() {
 
 		int choice = 99;
 		int byNameAndSurname = 1;
@@ -90,17 +96,17 @@ public class PersonDatabase2 implements Readable {
 		Iterator<Person2> iter = nowa.iterator();
 
 		while (choice != 0) {
-			System.out.println("W jaki sposób szukać?");
-			System.out.println("1) wpisz imię i nazwisko");
+			System.out.println("W jaki sposÃ³b szukaÄ‡?");
+			System.out.println("1) wpisz imiÄ™ i nazwisko");
 			System.out.println("2) wpisz pesel studenta");
-			System.out.println("0) przejdz poziom wyżej");
+			System.out.println("0) przejdz poziom wyÅ¼ej");
 			choice = input.nextInt();
 			switch (choice) {
 			case 1:
 
-				System.out.println("Podaj imiê osoby do wyœwietlenia");
+				System.out.println("Podaj imiÃª osoby do wyÅ“wietlenia");
 				String name = input.next();
-				System.out.println("Podaj nazwisko osoby do wyœwietlenia");
+				System.out.println("Podaj nazwisko osoby do wyÅ“wietlenia");
 				String surname = input.next();
 
 				int count = 0;
@@ -114,55 +120,52 @@ public class PersonDatabase2 implements Readable {
 				}
 
 				if (count == 1) {
-					System.out.println("znalazłem");
+					System.out.println("znalazÅ‚em");
 					System.out.println(looked.toString());
 					return looked;
-
 				} else if (count == 0) {
 					System.out.println("nie znaleziono studenta o takich danych");
 					break;
 				} else {
 
-					System.out.println("znaleziono więcej wyników o takich danych");
+					System.out.println("znaleziono wiÄ™cej wynikÃ³w o takich danych");
 					break;
 				}
 
 			case 2:
-				System.out.println("Podaj pesel osoby do wyœwietlenia");
+				System.out.println("Podaj pesel osoby do wyÅ“wietlenia");
 				String pesel = input.next();
 				Person2 found = new Person2();
 
-				for (Person2 look : nowa) {
-					if (look.getPesel().equals(pesel)) {
-						found = look;
-						System.out.println("znalazłem : " + found.toString());
-						return found;
+				Person2 check = new Person2();
+				check.setPesel(pesel);
 
-					} else {
-						System.out.println("nie znalazlem");
-						break;
-					}
-
-				}
-				if (found.getOcenki() != null) {
-					System.out.println("a jego oceny to: ");
-					for (int g : found.getOcenki()) {
-						System.out.println(g);
-						looked = found;
-					}
-
-				}
+				check = findByPesel(check);
+				System.out.println(check.toString());
+				looked = check;
+				return looked;
 			}
-			break;
 		}
-
 		return looked;
+		/*
+		 * for (Person2 look : nowa) { if (look.getPesel().equals(pesel)) { found =
+		 * look; System.out.println("znalazÅ‚em : " + found.toString()); return found;
+		 * 
+		 * } else { System.out.println("nie znalazlem"); break; }
+		 * 
+		 * } if (found.getOcenki() != null) { System.out.println("a jego oceny to: ");
+		 * for (int g : found.getOcenki()) { System.out.println(g); looked = found; }
+		 * 
+		 * } } break; }
+		 * 
+		 * return looked; }
+		 */
 	}
 
 	public void remove() {
-		System.out.println("Podaj nazwisko osoby do usuniêcia z listy");
+		System.out.println("Podaj nazwisko osoby do usuniÃªcia z listy");
 		String surname = input.next();
-		System.out.println("Podaj imię osoby do usuniêcia z listy");
+		System.out.println("Podaj imiÄ™ osoby do usuniÃªcia z listy");
 		String name = input.next();
 		int counter = 0;
 
@@ -178,11 +181,11 @@ public class PersonDatabase2 implements Readable {
 
 		if (counter == 1) {
 			nowa.remove(szukana);
-			System.out.println("udano usunięcie");
+			System.out.println("udano usuniÄ™cie");
 		}
 
 		else if (counter > 1) {
-			System.out.println("znalaziono za dużo wyników");
+			System.out.println("znalaziono za duÅ¼o wynikÃ³w");
 		}
 	}
 
