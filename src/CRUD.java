@@ -32,10 +32,11 @@ public class CRUD {
 	
 		while (reSet.next()) {
 			List<Integer> grades = new LinkedList<Integer>();
-			
 			name = reSet.getString("name");
 			surname = reSet.getString("surname");
 			pesel = reSet.getString("pesel");
+			grades = getGradesFromDb(pesel);
+			
 			Person2 pers = new Person2(name, surname, pesel, grades);
 			dbList.add(pers);
 		}
@@ -44,7 +45,7 @@ public class CRUD {
 
 	public void addAllFromDbToLocal() throws SQLException {
 		LinkedList<Person2> fromDb = getAllFromDb();
-
+		
 		for (Person2 p : fromDb) {
 			PersonDatabase2.addToLocal(p);
 		}
@@ -94,8 +95,9 @@ public class CRUD {
 		prepStat.setString(2, surname);
 		prepStat.setString(3, pesel);
 		prepStat.executeUpdate();
-		con.close();
 		addGrades(pers, grades);
+		con.close();
+		
 	}
 
 	public void updateInDb(Person2 p) throws SQLException {
@@ -112,6 +114,7 @@ public class CRUD {
 		prep.setString(3, pesel);
 		prep.executeUpdate();
 		conn.close();
+		addGrades(p, p.getOcenki());
 	}
 
 	public void updateOneRecord() throws SQLException {
@@ -127,6 +130,7 @@ public class CRUD {
 
 		if (checkByPeselInDB(newPerson)) {
 			updateInDb(newPerson);
+			addGrades(newPerson, newPerson.getOcenki());
 		} else {
 			System.out.println("Nie ma takiej osoby - dodajÄ™ nowÄ…");
 			addToDb(newPerson);
@@ -149,6 +153,8 @@ public class CRUD {
 					} else {
 						System.out.println("Nie ma takiej osoby - dodajÄ™ nowÄ…");
 						addToDb(personLocal);
+						
+						
 					}
 				} catch (NoSuchElementException e) {
 					System.out.println("brak zmian");
@@ -182,14 +188,33 @@ public class CRUD {
 	}
 
 	public void addGrades(Person2 pers, List<Integer> grades) throws SQLException {
-		String addGrade = "Update grades set ocena=? where pesel=?;";
+		String sqlAddGrade = "Insert into grades(pesel,grade) VALUES (?,?);";
 		String pesel = pers.getPesel();
-		grades = pers.getOcenki();
+		System.out.println("jestem jestem dodaje, oceny");
+		grades = (LinkedList<Integer>) pers.getOcenki();
 		Connection con = connect.getConnection();
-		PreparedStatement prep = con.prepareStatement(addGrade);
-		prep.setInt(1, grades.get(0));
-		prep.setNString(2, pesel);
+		PreparedStatement prep = con.prepareStatement(sqlAddGrade);
+		prep.setNString(1, pesel);
+		for (int i=0;i<grades.size();i++) {
+		prep.setInt(2, grades.get(i));
 		prep.executeUpdate();
+		}
 		con.close();
 	}
+	public LinkedList<Integer> getGradesFromDb (String pesel) throws SQLException {
+	Connection con = connect.getConnection();
+	String getGradesSQL = "Select * from dzienniczek.grades WHERE pesel=?;";
+	PreparedStatement prep = con.prepareStatement(getGradesSQL);
+	prep.setString(1, pesel);
+	ResultSet reSet = 	prep.executeQuery();
+
+	LinkedList<Integer> grades = new LinkedList<>();
+	
+	while (reSet.next()) {
+	int grade = reSet.getInt("grade");
+	grades.add(grade);
+	}
+	return grades;
+
+}
 }
